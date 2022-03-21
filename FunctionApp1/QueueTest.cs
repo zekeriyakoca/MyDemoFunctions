@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Azure.Storage.Queues;
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace MyDemoFunctions
 {
@@ -20,8 +22,11 @@ namespace MyDemoFunctions
         {
 
             log.LogInformation("C# HTTP trigger function processed a request.");
-
-            var connectionString = "DefaultEndpointsProtocol=https;AccountName=cloudshell1401215711;AccountKey=kvSHoFpBzd2iVBcnDpppxYDv774VCE0l4u0o08Jyiqi9rcJXKC0HC/LHc+HHEU9JRU37yZkF3FkaSafEi8HHBA==;EndpointSuffix=core.windows.net";
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+                .Build();
+            var connectionString = configuration["Values:StorageForQueue"];
             var queueName = "zek-queue";
             var client = new QueueClient(connectionString, queueName);
             
